@@ -93,7 +93,7 @@ cyaccess = Extension(
 # Standard setup
 ###############################################
 
-version = "0.7"
+version = "0.7.1"
 
 packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
 
@@ -112,20 +112,20 @@ setup(
     ),
     url="https://udst.github.io/pandana/",
     ext_modules=[cyaccess],
+    python_requires=">=3.9",
     install_requires=[
-        'numpy >=1.8',
-        'pandas >=0.17',
+        'numpy >=1.26',
+        'pandas >=1.5',
         'requests >=2.0',
-        'scikit-learn >=0.18',
-        'tables >=3.1'
+        'scikit-learn >=1.3',
+        'tables >=3.9'
     ],
     classifiers=[
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: GNU Affero General Public License v3",
     ],
 )
