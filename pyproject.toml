@@ -1,13 +1,56 @@
 [build-system]
-# Requirements for building the compiled package
 requires = [
-        "wheel",
-        "setuptools >=40.8",
-        "cython >=0.25.2",
-        "oldest-supported-numpy"
+    "setuptools >=65.0",
+    "cython >=3.0.8",
+    "numpy >=2.0",
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
-dynamic = ["version", "readme", "license", "dependencies", "description"]
 name = "pandana"
+version = "0.7.1"
+description = "Python library for network analysis"
+readme = "README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.9"
+authors = [
+    { name = "UrbanSim Inc." },
+]
+dependencies = [
+    "numpy >=1.26",
+    "pandas >=1.5",
+    "requests >=2.0",
+    "scikit-learn >=1.3",
+    "tables >=3.9",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://udst.github.io/pandana/"
+
+[project.optional-dependencies]
+dev = [
+    "coveralls",
+    "numpydoc",
+    "pycodestyle",
+    "pytest >=7.0",
+    "pytest-cov",
+    "sphinx",
+    "sphinx_rtd_theme",
+]
+osm = [
+    "osmnet >=0.1.2",
+]
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "tests.*"]
+
+[tool.pycodestyle]
+ignore = ["E226", "E402"]
+max-line-length = 100
