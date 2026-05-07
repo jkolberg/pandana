@@ -7,3 +7,7 @@ requires = [
         "oldest-supported-numpy"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version", "readme", "license", "dependencies", "description"]
+name = "pandana"
