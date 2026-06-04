@@ -83,7 +83,7 @@ class Network:
         # node IDs are thus translated back and forth in the python layer,
         # which allows non-integer node IDs as well
         self.node_idx = pd.Series(
-            np.arange(len(nodes_df), dtype="int"), index=nodes_df.index
+            np.arange(len(nodes_df), dtype=np.int32), index=nodes_df.index
         )
 
         edges = pd.concat(
@@ -91,10 +91,14 @@ class Network:
             axis=1,
         )
 
+        # Keep integer buffers aligned with C long expected by cython extension.
+        node_idx_values = np.asarray(self.node_idx.values, dtype=np.int32)
+        edge_idx_values = np.asarray(edges.values, dtype=np.int32)
+
         self.net = cyaccess(
-            self.node_idx.values,
+            node_idx_values,
             nodes_df.astype("double").values,
-            edges.values,
+            edge_idx_values,
             edges_df[edge_weights.columns].transpose().astype("double").values,
             twoway,
         )
@@ -146,6 +150,11 @@ class Network:
             how="left",
         )
         return df.node_idx
+
+    @staticmethod
+    def _to_c_long_array(values):
+        # cyaccess expects C long buffers; on Windows that maps to 32-bit ints.
+        return np.asarray(values, dtype=np.int32)
 
     @property
     def aggregations(self):
@@ -243,7 +252,11 @@ class Network:
 
         imp_num = self._imp_name_to_num(imp_name)
 
-        paths = self.net.shortest_paths(nodes_a_idx, nodes_b_idx, imp_num)
+        paths = self.net.shortest_paths(
+            self._to_c_long_array(nodes_a_idx),
+            self._to_c_long_array(nodes_b_idx),
+            imp_num,
+        )
 
         # map back to external node ids
         return [self.node_ids.values[p] for p in paths]
@@ -326,7 +339,11 @@ class Network:
 
         imp_num = self._imp_name_to_num(imp_name)
 
-        lens = self.net.shortest_path_distances(nodes_a_idx, nodes_b_idx, imp_num)
+        lens = self.net.shortest_path_distances(
+            self._to_c_long_array(nodes_a_idx),
+            self._to_c_long_array(nodes_b_idx),
+            imp_num,
+        )
 
         if 4294967.295 in lens:
             unconnected_idx = [i for i, v in enumerate(lens) if v == 4294967.295]
@@ -389,7 +406,7 @@ class Network:
 
         self.net.initialize_access_var(
             name.encode("utf-8"),
-            df.node_idx.values.astype("int"),
+            self._to_c_long_array(df.node_idx.values),
             df[name].values.astype("double"),
         )
 
@@ -444,7 +461,12 @@ class Network:
         imp_name = self.impedance_names[imp_num]
         ext_ids = self.node_idx.index.values
 
-        raw_result = self.net.nodes_in_range(nodes, radius, imp_num, ext_ids)
+        raw_result = self.net.nodes_in_range(
+            self._to_c_long_array(nodes),
+            radius,
+            imp_num,
+            self._to_c_long_array(ext_ids),
+        )
         clean_result = pd.concat(
             [
                 pd.DataFrame(r, columns=["destination", imp_name]).assign(source=ix)
@@ -774,7 +796,10 @@ class Network:
         node_idx = self._node_indexes(node_ids)
 
         self.net.initialize_category(
-            maxdist, maxitems, category.encode("utf-8"), node_idx.values
+            maxdist,
+            maxitems,
+            category.encode("utf-8"),
+            self._to_c_long_array(node_idx.values),
         )
 
     def nearest_pois(

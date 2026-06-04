@@ -3,7 +3,7 @@ import sys
 
 import numpy as np  # for c++ headers
 
-from setuptools import find_packages, setup, Extension
+from setuptools import setup, Extension
 
 
 ###############################################
@@ -90,42 +90,8 @@ cyaccess = Extension(
 
 
 ###############################################
-# Standard setup
+# Minimal setup shim
 ###############################################
-
-version = "0.7"
-
-packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
-
 setup(
-    packages=packages,
-    name="pandana",
-    author="UrbanSim Inc.",
-    version=version,
-    license="AGPL",
-    description=("Python library for network analysis"),
-    long_description=(
-        "Pandana is a Python library for network analysis that uses "
-        "contraction hierarchies to calculate super-fast travel "
-        "accessibility metrics and shortest paths. The numerical "
-        "code is in C++."
-    ),
-    url="https://udst.github.io/pandana/",
     ext_modules=[cyaccess],
-    install_requires=[
-        'numpy >=1.8',
-        'pandas >=0.17',
-        'requests >=2.0',
-        'scikit-learn >=0.18',
-        'tables >=3.1'
-    ],
-    classifiers=[
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "License :: OSI Approved :: GNU Affero General Public License v3",
-    ],
 )

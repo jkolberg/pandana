@@ -1,3 +1,12 @@
+v0.8
+====
+
+2026/06/01
+
+* Targets modern Python versions (3.10+)
+* Adds explicit support target for pandas 2.3+
+* Expands CI compatibility checks to include pandas 2.3 and latest pandas
+
 v0.7
 ====
 

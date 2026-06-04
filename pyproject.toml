@@ -7,3 +7,35 @@ requires = [
         "oldest-supported-numpy"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pandana"
+version = "0.7"
+description = "Python library for network analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "AGPL-3.0-only"
+authors = [
+        { name = "UrbanSim Inc." }
+]
+dependencies = [
+        "numpy >=1.8",
+        "pandas >=2.3,<3.0",
+        "requests >=2.0",
+        "scikit-learn >=0.18",
+        "tables >=3.1",
+]
+classifiers = [
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12"
+]
+
+[project.urls]
+Homepage = "https://udst.github.io/pandana/"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
