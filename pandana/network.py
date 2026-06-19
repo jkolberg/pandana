@@ -92,8 +92,8 @@ class Network:
         )
 
         # Keep integer buffers aligned with C long expected by cython extension.
-        node_idx_values = np.asarray(self.node_idx.values, dtype=np.int32)
-        edge_idx_values = np.asarray(edges.values, dtype=np.int32)
+        node_idx_values = np.asarray(self.node_idx.values, dtype=np.int64)
+        edge_idx_values = np.asarray(edges.values, dtype=np.int64)
 
         self.net = cyaccess(
             node_idx_values,
