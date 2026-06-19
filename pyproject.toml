@@ -3,8 +3,9 @@
 requires = [
         "wheel",
         "setuptools >=40.8",
-        "cython >=0.25.2",
-        "oldest-supported-numpy"
+        "cython >=3.0.0",       # Upgraded for modern python/numpy compatibility
+        "pybind11 >=2.12.0",    # CRITICAL: Adds NumPy 2 compile-time support
+        "numpy >=2.0.0"         # CRITICAL: Replaces oldest-supported-numpy
 ]
 build-backend = "setuptools.build_meta"
 
@@ -19,7 +20,7 @@ authors = [
         { name = "UrbanSim Inc." }
 ]
 dependencies = [
-        "numpy >=1.8",
+        "numpy >=2.0",
         "pandas >=2.3,<3.0",
         "requests >=2.0",
         "scikit-learn >=0.18",
