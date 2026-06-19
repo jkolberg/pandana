@@ -153,8 +153,8 @@ class Network:
 
     @staticmethod
     def _to_c_long_array(values):
-        # cyaccess expects C long buffers; on Windows that maps to 32-bit ints.
-        return np.asarray(values, dtype=np.int32)
+        # cyaccess expects C long buffers; on 64-bit Linux that maps to 64-bit ints.
+        return np.asarray(values, dtype=np.int64)
 
     @property
     def aggregations(self):
