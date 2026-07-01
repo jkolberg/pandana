@@ -1,5 +1,7 @@
 from __future__ import division, print_function
 
+import ctypes
+
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import KDTree
@@ -7,6 +9,13 @@ from sklearn.neighbors import KDTree
 from .cyaccess import cyaccess
 from .loaders import pandash5 as ph5
 import warnings
+
+# The Cython extension declares its buffers as C `long`, whose size is
+# platform-dependent (4 bytes on Windows/MSVC, 8 bytes on Linux/macOS).
+# np.int_ no longer reliably matches this on all numpy versions (e.g. numpy
+# 2.x reports np.int_ as int64 even on Windows), so derive the dtype
+# directly from ctypes.c_long instead.
+C_LONG_DTYPE = np.dtype(f"i{ctypes.sizeof(ctypes.c_long)}")
 
 
 def reserve_num_graphs(num):
@@ -92,8 +101,8 @@ class Network:
         )
 
         # Keep integer buffers aligned with C long expected by cython extension.
-        node_idx_values = np.asarray(self.node_idx.values, dtype=np.int_)
-        edge_idx_values = np.asarray(edges.values, dtype=np.int_)
+        node_idx_values = self._to_c_long_array(self.node_idx.values)
+        edge_idx_values = self._to_c_long_array(edges.values)
 
         self.net = cyaccess(
             node_idx_values,
@@ -153,10 +162,10 @@ class Network:
 
     @staticmethod
     def _to_c_long_array(values):
-        # cyaccess expects C long buffers; np.int_ matches C long on the current platform
-        # (32-bit on Windows/MSVC, 64-bit on Linux/macOS), unlike np.int64 which is
-        # always 8 bytes and mismatches Windows' 4-byte long.
-        return np.asarray(values, dtype=np.int_)
+        # cyaccess expects C long buffers; C_LONG_DTYPE is derived from
+        # ctypes.c_long so it stays correct across numpy versions and platforms
+        # (32-bit on Windows/MSVC, 64-bit on Linux/macOS).
+        return np.asarray(values, dtype=C_LONG_DTYPE)
 
     @property
     def aggregations(self):
