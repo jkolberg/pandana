@@ -92,8 +92,8 @@ class Network:
         )
 
         # Keep integer buffers aligned with C long expected by cython extension.
-        node_idx_values = np.asarray(self.node_idx.values, dtype=np.int64)
-        edge_idx_values = np.asarray(edges.values, dtype=np.int64)
+        node_idx_values = np.asarray(self.node_idx.values, dtype=np.int_)
+        edge_idx_values = np.asarray(edges.values, dtype=np.int_)
 
         self.net = cyaccess(
             node_idx_values,
@@ -153,8 +153,10 @@ class Network:
 
     @staticmethod
     def _to_c_long_array(values):
-        # cyaccess expects C long buffers; on 64-bit Linux that maps to 64-bit ints.
-        return np.asarray(values, dtype=np.int64)
+        # cyaccess expects C long buffers; np.int_ matches C long on the current platform
+        # (32-bit on Windows/MSVC, 64-bit on Linux/macOS), unlike np.int64 which is
+        # always 8 bytes and mismatches Windows' 4-byte long.
+        return np.asarray(values, dtype=np.int_)
 
     @property
     def aggregations(self):
